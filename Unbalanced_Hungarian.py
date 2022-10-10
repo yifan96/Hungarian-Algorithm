@@ -22,6 +22,7 @@ def min_zero_row(zero_mat, mark_zero):
     zero_mat[:, zero_index] = False
 
 
+
 def mark_matrix(mat):
     '''
     Finding the returning possible solutions for LAP problem.
@@ -36,13 +37,17 @@ def mark_matrix(mat):
     marked_zero = []
     while (True in zero_bool_mat_copy):
         min_zero_row(zero_bool_mat_copy, marked_zero)
+    #print(marked_zero)
 
     # Recording the row and column positions seperately.
     marked_zero_row = []
     marked_zero_col = []
+
     for i in range(len(marked_zero)):
         marked_zero_row.append(marked_zero[i][0])
         marked_zero_col.append(marked_zero[i][1])
+    print(marked_zero_row)
+    print(marked_zero_col)
 
     # Step 2-2-1
     non_marked_row = list(set(range(cur_mat.shape[0])) - set(marked_zero_row))
@@ -68,8 +73,12 @@ def mark_matrix(mat):
                 check_switch = True
     # Step 2-2-6
     marked_rows = list(set(range(mat.shape[0])) - set(non_marked_row))
-
+    print(marked_rows)
+    print(marked_cols)
     return (marked_zero, marked_rows, marked_cols)
+
+
+
 
 
 def adjust_matrix(mat, cover_rows, cover_cols):
@@ -82,6 +91,7 @@ def adjust_matrix(mat, cover_rows, cover_cols):
             for i in range(len(cur_mat[row])):
                 if i not in cover_cols:
                     non_zero_element.append(cur_mat[row][i])
+    print(non_zero_element)
     min_num = min(non_zero_element)
 
     # Step 4-2
@@ -94,19 +104,72 @@ def adjust_matrix(mat, cover_rows, cover_cols):
     for row in range(len(cover_rows)):
         for col in range(len(cover_cols)):
             cur_mat[cover_rows[row], cover_cols[col]] = cur_mat[cover_rows[row], cover_cols[col]] + min_num
+
     return cur_mat
 
+def unbalanced_assignment(mat):
+    zero_mat = (mat == 0)
+    #print(zero_mat)
 
+    marked_zero = []
+    zero_bool_mat_copy = zero_mat.copy()
+    marked_zero_row = []
+    marked_zero_col = []
+
+    for i in range(len(marked_zero)):
+        marked_zero_row.append(marked_zero[i][0])
+        marked_zero_col.append(marked_zero[i][1])
+    # Recording possible answer positions by marked_zero
+    while len(marked_zero) < len(mat[0]):
+        for row in range(len(zero_bool_mat_copy)):
+            if np.sum(zero_bool_mat_copy[row] == True) == 1:
+                marked_zero.append([row, np.where(zero_bool_mat_copy[row] == True)[0][0]])
+                zero_bool_mat_copy[:, np.where(zero_bool_mat_copy[row] == True)[0][0]] = [False for i in range(
+                    len(zero_bool_mat_copy))]
+                # zero_bool_mat_copy[row, :] = [False for i in range(len(zero_bool_mat_copy[0]))]
+                # break
+                # print("change 1")
+                # print(zero_bool_mat_copy)
+                continue
+                # if np.sum()
+        # print(marked_zero)
+        # Now the left
+        left_zero_row = np.where(zero_bool_mat_copy == True)[0]
+        left_zero_col = np.where(zero_bool_mat_copy == True)[1]
+        # print(len(np.where(zero_bool_mat_copy==True)[0]))
+        min_zero_index = [-1, -1]
+        min_zero = np.Inf
+        index = 0
+        if len(marked_zero) < len(mat[0]):
+            for i in range(len(np.where(zero_bool_mat_copy == True)[0])):
+                if mat[left_zero_row[i]][left_zero_col[i]] < min_zero:
+                    min_zero_index = [left_zero_row[i], left_zero_col[i]]
+                    min_zero = mat[left_zero_row[i]][left_zero_col[i]]
+                    index = i
+            marked_zero.append(min_zero_index)
+            if len(left_zero_col) > 0:
+                zero_bool_mat_copy[:, left_zero_col[index]] = [False for i in range(len(zero_bool_mat_copy))]
+            #print(zero_bool_mat_copy)
+            #print(marked_zero)
+    return marked_zero
 def hungarian_algorithm(mat):
+    #dim = max(mat.shape[0],mat.shape[1])
     dim = mat.shape[0]
+    print(dim)
     cur_mat = mat
 
     # Step 1 - Every column and every row subtract its internal minimum
-    for row_num in range(mat.shape[0]):
-        cur_mat[row_num] = cur_mat[row_num] - np.min(cur_mat[row_num])
 
     for col_num in range(mat.shape[1]):
         cur_mat[:, col_num] = cur_mat[:, col_num] - np.min(cur_mat[:, col_num])
+    for row_num in range(mat.shape[0]):
+        cur_mat[row_num] = cur_mat[row_num] - np.min(cur_mat[row_num])
+    print("substract col minima")
+    print(cur_mat)
+
+
+    print("substract row and colomn minima")
+    print(cur_mat)
     zero_count = 0
     while zero_count < dim:
         # Step 2 & 3
@@ -115,7 +178,13 @@ def hungarian_algorithm(mat):
 
         if zero_count < dim:
             cur_mat = adjust_matrix(cur_mat, marked_rows, marked_cols)
-
+        #print(cur_mat)
+    print("cur_mat")
+    print(cur_mat)
+    result = unbalanced_assignment(cur_mat)
+    print("ans pos")
+    print(ans_pos)
+    print(result)
     return ans_pos
 
 
@@ -135,25 +204,11 @@ def main():
     by using Hungarian Algorithm. In other words, the maximum value
     and elements set in cost matrix are available.'''
 
-    # The matrix who you want to find the minimum sum
-    # first trial
-    # cost_matrix = np.array([[66.0915, 46.5344, 56.5262, 50.3840],
-    #                         [67.7483, 50.5344, 54.8693, 46.3840],
-    #                         [70.2337, 56.5344, 51.1127, 42.7272],
-    #                         [71.8905, 60.5344, 49.4558, 41.0703]])
-    #second trial
-    # cost_matrix = np.array([[30.9199, 14.4853, 40.9705, 56.9117],
-    #                         [65.4052, 27.2207, 41.1127, 43.7990],
-    #                         [64.0326, 28.8775, 21.7990, 26.1421],
-    #                         [88.3757, 50.1913, 50.6274, 32.6274]])
-
-    # cost_matrix = np.array([[9.9921, 7.9552, 14.9598],
-    #                         [5.5605, 10.3082, 8.9450],
-    #                         [14.9554, 4.4952, 8.5876]])
-
-    cost_matrix = np.array([[163.338, 110.041, 331.194],
-                            [142.166, 131.598, 312.366],
-                            [93.598, 192.284, 263.797]])
+    cost_matrix = np.array([[300, 250, 180, 320, 270, 190, 220, 260],
+                [290, 310, 190, 180, 210, 200, 300, 190],
+                [280, 290, 300, 190, 190, 220, 230, 260],
+                [290, 300, 190, 240, 250, 190, 180, 210],
+                [210, 200, 180, 170, 160, 140, 160, 180]])
 
     ans_pos = hungarian_algorithm(cost_matrix.copy())  # Get the element position.
     print(ans_pos)
@@ -179,3 +234,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+#    [[0, 2], [2, 3], [3, 6], [1, 7], [4, 0], [4, 1], [4, 4], [4, 5]]
