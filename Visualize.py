@@ -43,35 +43,35 @@ class Animation:
         self.ax.pcolormesh(self.map, cmap=cmap, alpha=1.0, edgecolors='black')
         #print(self.paths)
 
-        for i in range(int(len(self.goals))):
+        # for i in range(int(len(self.goals))):
+        #
+        #     name = str(i)
+        #     self.targets[i] = Rectangle((self.goals[i][1], self.goals[i][0]), 1.0, 1.0, facecolor='grey')
+        #     self.targets[i].original_face_color = 'grey'
+        #     self.patches.append(self.targets[i])
+        #     # target_text_flag = True
+        #     # text_offset = 0.0
+        #     # if target_text_flag:
+        #     #     self.ax.text(self.goals[i][1] + text_offset,
+        #     #                  self.goals[i][0] + text_offset,
+        #     #                  "T" + str(i), fontweight="bold", color="red")
+        #     self.target_names[i] = self.ax.text(goals[i][1] - 0.5, goals[i][0] -0.5, name, color='red')
+        #     self.target_names[i].set_horizontalalignment('center')
+        #     self.target_names[i].set_verticalalignment('center')
+        #     self.artists.append(self.target_names[i])
 
-            name = str(i)
-            self.targets[i] = Rectangle((self.goals[i][1], self.goals[i][0]), 1.0, 1.0, facecolor='grey')
-            self.targets[i].original_face_color = 'grey'
-            self.patches.append(self.targets[i])
-            # target_text_flag = True
-            # text_offset = 0.0
-            # if target_text_flag:
-            #     self.ax.text(self.goals[i][1] + text_offset,
-            #                  self.goals[i][0] + text_offset,
-            #                  "T" + str(i), fontweight="bold", color="red")
-            self.target_names[i] = self.ax.text(goals[i][1] - 0.5, goals[i][0] -0.5, name, color='red')
-            self.target_names[i].set_horizontalalignment('center')
-            self.target_names[i].set_verticalalignment('center')
-            self.artists.append(self.target_names[i])
 
-
-        for i in range(len(self.paths)):
-            name = str(i)
-            self.agents[i] = Circle((self.starts[i][1], self.starts[i][0]), 0.5, facecolor=Colors[i % len(Colors)],
-                                    edgecolor='black')
-            self.agents[i].original_face_color = Colors[i % len(Colors)]
-            self.patches.append(self.agents[i])
-            self.T = max(self.T, len(paths[i]) - 1)
-            self.agent_names[i] = self.ax.text(starts[i][1], starts[i][0] + 0.25, name, fontweight='bold')
-            self.agent_names[i].set_horizontalalignment('center')
-            self.agent_names[i].set_verticalalignment('center')
-            self.artists.append(self.agent_names[i])
+        # for i in range(len(self.paths)):
+        #     name = str(i)
+        #     self.agents[i] = Circle((self.starts[i][1], self.starts[i][0]), 0.5, facecolor=Colors[i % len(Colors)],
+        #                             edgecolor='black')
+        #     self.agents[i].original_face_color = Colors[i % len(Colors)]
+        #     self.patches.append(self.agents[i])
+        #     self.T = max(self.T, len(paths[i]) - 1)
+        #     self.agent_names[i] = self.ax.text(starts[i][1], starts[i][0] + 0.25, name, fontweight='bold')
+        #     self.agent_names[i].set_horizontalalignment('center')
+        #     self.agent_names[i].set_verticalalignment('center')
+        #     self.artists.append(self.agent_names[i])
 
 
         self.animation = animation.FuncAnimation(self.fig, self.animate_func,

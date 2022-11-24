@@ -74,6 +74,7 @@ def gridAstar(grids, start, goal, w=1.0):
   gy = int(np.floor(goal/nxt))
   search_success = True
   while True:
+
     if len(open_list) == 0:
       search_success = False;
       break;
@@ -118,10 +119,12 @@ def gridAstar(grids, start, goal, w=1.0):
     while parent_dict[cid] != -1 :
       cid = parent_dict[cid]
       output.append(cid)
+    return output
   else:
     # do nothing
-    print(" fail to plan !")
-  return output
+    print(" search fail !")
+    return -1
+
 
 def getTargetGraph(grids,Vo,Vt,Vd):
   """
@@ -131,11 +134,15 @@ def getTargetGraph(grids,Vo,Vt,Vd):
   """
   N = len(Vo)
   M = len(Vt)
-  nn = N+M+N
+  Q = len(Vd)
+  nn = N+M+Q
   V = Vo + Vt + Vd
   spMat = np.zeros((nn,nn))
   for i in range(nn):
     for j in range(i+1,nn):
+      # print('starts',V[i])
+      # print('ends',V[j])
+      # print(gridAstar(grids,V[i],V[j]))
       spMat[i,j] = len( gridAstar(grids,V[i],V[j]) ) - 1
       spMat[j,i] = spMat[i,j]
   return spMat

@@ -26,6 +26,7 @@ class VRP_solver(object):
         """Prints solution on console."""
         #print(f'Objective: {solution.ObjectiveValue()}')
         max_route_distance = 0
+        total_distance = 0
         for vehicle_id in range(self.data['num_vehicles']):
             index = routing.Start(vehicle_id)
             plan_output = 'Route for vehicle {}:\n'.format(vehicle_id)
@@ -40,6 +41,8 @@ class VRP_solver(object):
             plan_output += 'Distance of the route: {}m\n'.format(route_distance)
             #print(plan_output)
             max_route_distance = max(route_distance, max_route_distance)
+            total_distance = total_distance + route_distance
+            #print("route_distance", total_distance)
         #print('Maximum of the route distances: {}m'.format(max_route_distance))
 
 
@@ -55,7 +58,7 @@ class VRP_solver(object):
             x.pop()
         assignment_result = [[(x - self.data['num_vehicles']) for x in row] for row in assignment_result]
 
-        return assignment_result, max_route_distance
+        return assignment_result, max_route_distance, total_distance
 
 
 
@@ -112,10 +115,10 @@ class VRP_solver(object):
 
         # Print solution on console.
         if solution:
-            assingment_result, max_route_distance = self.print_solution(manager, routing, solution)
+            assingment_result, max_route_distance, total_distance = self.print_solution(manager, routing, solution)
         else:
             print('No solution found !')
-        return assingment_result, max_route_distance
+        return assingment_result, max_route_distance, total_distance
 
 
 

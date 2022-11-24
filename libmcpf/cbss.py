@@ -150,8 +150,6 @@ class CbssNode:
     Note that one conflict should be splited to 2 constraints.
     """
     done_set = set()
-    print('ddddddddddddddddddddddddddddddddddd')
-    print(self.sol.paths)
     for k1 in self.sol.paths:
       for k2 in self.sol.paths:
         if k2 in done_set or k2 == k1:
@@ -491,7 +489,14 @@ class CbssFramework:
         search_success = True
         best_g_value = curr_node.cost
         reached_goal_id = curr_node.id
-        break
+        path = []
+        for i in range(self.num_robots):
+          coor =[ (int(np.floor(index / self.xd)), int(index % self.xd)) for index in curr_node.sol.paths[i][0]]
+          path.append(coor)
+        print('timeeeeeeeeeeeeeeeeeeeeee')
+        print(tnow - self.tstart)
+
+      break
 
       max_child_cost = 0
       for cstr in cstrs:
@@ -530,7 +535,7 @@ class CbssFramework:
       int(self.kbtsp.GetTotalCalls()), float(self.kbtsp.GetTotalTime()), int(len(self.root_set)) ]
 
     if search_success:
-      return self.ReconstructPath(reached_goal_id), output_res
+      return self.ReconstructPath(reached_goal_id), output_res, path
     else:
-      return dict(), output_res
+      return dict(), output_res, dict()
     

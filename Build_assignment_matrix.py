@@ -1,7 +1,7 @@
 from single_agent_planner import compute_heuristics, a_star, get_sum_of_cost
 import timeit
 import numpy as np
-
+import common as cm
 class Build_assignment_matrix_unbalanced_hungarian(object):
     def __init__(self, map, curr_locs, goals):
         self.map = map
@@ -15,6 +15,28 @@ class Build_assignment_matrix_unbalanced_hungarian(object):
                 path = a_star(self.map, self.curr_locs[idx_agent], self.goals[idx_goal], heuristics, 1, [])
                 cost_matrix[idx_agent][idx_goal] = len(path) -1
         return cost_matrix
+
+
+class Build_assignment_matrix_mspf(object):
+    def __init__(self, map, starts, goals):
+        # starts and goals are lists of tuples
+        self.map = map
+        self.starts = starts
+        self.goals = goals
+        #self.nodes = starts + goals
+        self.nodes = starts + goals
+    def build_matrix(self):
+        cost_matrix = np.ones(shape = [len(self.nodes), len(self.nodes)]) * np.Inf
+        for idx_node in range(len(self.nodes)):
+            for idx_node_ in range(len(self.nodes)):
+                if cm.gridAstar(self.map, self.nodes[idx_node], self.nodes[idx_node_]) == -1:
+                    return []
+                cost_matrix[idx_node][idx_node_] = len(cm.gridAstar(self.map, self.nodes[idx_node], self.nodes[idx_node_])) -1
+        for i in range(len(self.starts)):
+            for col_idx in range(i + 1, len(cost_matrix)):
+                cost_matrix[col_idx][i] = 0
+        return cost_matrix
+
 
 class Build_assignment_matrix_vrp(object):
     def __init__(self, map, starts, goals):
@@ -50,9 +72,10 @@ class Build_assignment_matrix_vrp_manhaton(object):
         for idx_node in range(len(self.nodes)):
             for idx_node_ in range(len(self.nodes)):
                 cost_matrix[idx_node][idx_node_] = abs(self.nodes[idx_node][0]-self.nodes[idx_node_][0])+abs(self.nodes[idx_node][1]-self.nodes[idx_node_][1])
-        for i in range(len(self.starts)):
-            for col_idx in range(i + 1, len(cost_matrix)):
-                cost_matrix[col_idx][i] = 0
+        # set cost from tasks to starts as 0, get tsp result without requiring return.
+        # for i in range(len(self.starts)):
+        #     for col_idx in range(i + 1, len(cost_matrix)):
+        #         cost_matrix[col_idx][i] = 0
         return cost_matrix
 
 

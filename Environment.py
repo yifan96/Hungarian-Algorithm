@@ -115,7 +115,7 @@ class Environment:
         """
 
         agents = list()
-        print(self.map_array)
+        #print(self.map_array)
         while len(agents) < 2 * num_agents:
             start = [randint(1, self.map_width - 1), randint(1, self.map_width - 1)]
             while self.map_array[start[1]][start[0]] != self.value_non_obs or (self.check_target_collide_agents(start, agents)):
